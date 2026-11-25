@@ -62,6 +62,10 @@ On the same momentum holdings, the winners’ subsequent return per dollar of en
 
 Zhang, So and Driouchi report a **+39.9 percentage point** momentum spread on premium with two currencies per side (online appendix, Table A11). They rank nine currencies weekly. The different currency sets, formation frequencies and lookbacks leave the source of the gap open. [Paper and online appendix](https://doi.org/10.1093/rof/rfae002) · [Authors’ factor data](https://raymondhyso.com/research)
 
+### Which currencies contributed to raw IV profits?
+
+Over all 131 development months (February 2005–December 2015), MXN earned **$79,404**, or **76.3%** of the portfolio’s $104,054 net profit. JPY contributed another 20.9% and CAD 15.0%, while HKD reduced total profit by $11,559. Leadership varied by year. JPY contributed the most in 2007 and 2013, and CAD led in 2015. [Long and short positions, annual net P&L and annual contribution shares for all six currencies](results/in-sample-currency-attribution.md)
+
 ### How well did raw IV carry forward?
 
 On its full development period (February 2005–December 2015, 131 months), raw IV earned **USD 104,054** with a **0.72 Sharpe**. Applying the same rule over January 2016–December 2025 (120 months) earned **USD 1,013** with a **0.01 Sharpe**. This later period had already been inspected for the baseline. The momentum and illiquidity comparisons use development data only.

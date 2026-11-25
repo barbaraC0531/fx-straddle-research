@@ -70,6 +70,12 @@ Over all 131 development months (February 2005–December 2015), MXN earned **$7
 
 On its full development period (February 2005–December 2015, 131 months), raw IV earned **USD 104,054** with a **0.72 Sharpe**. Applying the same rule over January 2016–December 2025 (120 months) earned **USD 1,013** with a **0.01 Sharpe**. This later period had already been inspected for the baseline. The momentum and illiquidity comparisons use development data only.
 
+### Did the IV factor decay?
+
+The public nine-currency FIV factor declined by an estimated **3.03 percentage points per year** over 2001–2022 (HAC t = −4.35). Its mean fell from **44.25 pp** in the original sample through September 2016 to **8.11 pp** afterward; the estimated change was −36.14 pp (HAC t = −3.84). Our six-currency implementation fell from **$794 per month** in development to **$8 per month** after 2015, although the estimated change just missed the conventional 5% threshold (HAC t = −1.89, p = 0.059). On the common 2006–2022 interval, both premium-return series had statistically negative trends.
+
+The currency attribution shows that most of the six-pair deterioration came from the short-high-IV side. MXN short profit per selected trade fell from **$1,028 to $130** as average premium received declined and average expiry payoff increased. JPY short also weakened, while HKD remained a persistent loss on the long-low-IV side. These are retrospective diagnostics, not a new currency-selection rule. The 2016–2025 period has already been inspected and is not an untouched holdout. [Methods, tests, currency-side attribution and limitations](results/iv-factor-decay.md)
+
 ## Portfolio construction
 
 - The six pairs are USD/CAD, USD/CHF, USD/HKD, USD/JPY, USD/MXN and USD/SEK. Each European straddle combines a call and put struck at the one-month forward and held to a next-month-end expiry proxy.
@@ -81,3 +87,5 @@ On its full development period (February 2005–December 2015, 131 months), raw 
 Run `python analyze.py` with Python 3.9 or later for the longer single-signal comparison, raw-IV follow-up and momentum spreads. Run `python analyze.py --sorts` to also calculate all 26 common-window portfolios and their exposure-matched IV benchmarks. For the chart, install Matplotlib and run `python analyze.py --plot`. [Single-signal monthly P&L](data/monthly_pnl.csv) · [Monthly net P&L and gross vega for all 26 sorts](data/monthly_sorts.csv)
 
 The single-signal file rounds P&L to cents and momentum spreads to four decimals. Empty observations mark unavailable or unevaluated results. The 26-sort file retains the calculated portfolio P&L and exposure for each month. Repricing the underlying trades requires separate access to the historical IV bid/ask, spot, one-month forward and USD funding inputs.
+
+The decay study publishes only derived, aggregate outputs: [annual strategy statistics](data/iv_factor_decay/annual_strategy_statistics.csv), [trend and fixed-split tests](data/iv_factor_decay/decay_and_trend_tests.csv), [segment mean tests](data/iv_factor_decay/segment_mean_statistics.csv), [currency-period comparison](data/iv_factor_decay/currency_period_side_comparison.csv), and [currency-year-side attribution](data/iv_factor_decay/currency_year_side_attribution.csv). Proprietary Bloomberg inputs are not included.

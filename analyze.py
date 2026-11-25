@@ -2,6 +2,7 @@
 
 import argparse
 import csv
+from collections import defaultdict
 from datetime import date
 from math import sqrt
 from pathlib import Path
@@ -30,6 +31,47 @@ def metrics(values):
 def print_row(label, values):
     pnl, sharpe, drawdown = metrics(values)
     print(f"{label:<20} {len(values):>6} {pnl:>14,.0f} {sharpe:>9.2f} {drawdown:>11.2f}")
+
+
+def characteristic_sort_report():
+    portfolios = defaultdict(list)
+    with (ROOT / "data/monthly_sorts.csv").open(encoding="utf-8", newline="") as source:
+        for row in csv.DictReader(source):
+            specification = (row["iv"], row["momentum"], row["illiquidity"])
+            portfolios[specification].append(row)
+
+    baseline = {r["expiry_month"]: r for r in portfolios[("raw", "", "")]}
+    lines = [
+        "# Results for all 26 characteristic sorts",
+        "",
+        "Every specification uses the same 109 expiry months, December 2006 through December 2015. "
+        "Raw uses the signal level. A z-score compares each currency with its own prior 12 observations. "
+        "An empty signal column means the portfolio omits that characteristic.",
+        "",
+        "Active months count dates with positions. Gross vega is average USD exposure per volatility "
+        "point across all 109 months. Both P&L columns report cumulative net USD. Matched IV trades "
+        "raw IV at the same actual gross vega as the strategy each month, including zero in cash months. "
+        "Sharpe ratios are annualized from monthly net P&L. Dollar figures are rounded independently.",
+    ]
+    for count, heading in enumerate(("Single characteristics", "Two characteristics", "Three characteristics"), 1):
+        lines.extend(["", f"## {heading}", "",
+                      "| IV | Momentum | Illiquidity | Active months | Mean gross vega | Net P&L | Sharpe | Matched IV P&L | Matched IV Sharpe |",
+                      "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |"])
+        for spec, rows in portfolios.items():
+            if sum(bool(basis) for basis in spec) != count:
+                continue
+            vega = [float(r["gross_vega_usd_per_vol_point"]) for r in rows]
+            pnl = [float(r["net_pnl_usd"]) for r in rows]
+            benchmark = [baseline[r["expiry_month"]] for r in rows]
+            matched = [float(b["net_pnl_usd"]) * exposure / float(b["gross_vega_usd_per_vol_point"])
+                       for b, exposure in zip(benchmark, vega)]
+            total, sharpe, _ = metrics(pnl)
+            matched_total, matched_sharpe, _ = metrics(matched)
+            labels = " | ".join(spec)
+            active = sum(exposure > 0 for exposure in vega)
+            lines.append(f"| {labels} | {active} | {mean(vega):,.0f} | {total:,.0f} | {sharpe:.3f} "
+                         f"| {matched_total:,.0f} | {matched_sharpe:.3f} |")
+    return "\n".join(lines)
 
 
 def draw_chart(rows):
@@ -63,6 +105,7 @@ def draw_chart(rows):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plot", action="store_true", help="Regenerate the chart using Matplotlib.")
+    parser.add_argument("--sorts", action="store_true", help="Print the common-window tables for all 26 characteristic sorts.")
     args = parser.parse_args()
     with (ROOT / "data/monthly_pnl.csv").open(encoding="utf-8", newline="") as source:
         rows = list(csv.DictReader(source))
@@ -80,6 +123,9 @@ def main():
         print(f"Mean momentum spread: {mean(float(r[column]) for r in common):+.1f} {unit}")
     if args.plot:
         draw_chart(common)
+    if args.sorts:
+        print()
+        print(characteristic_sort_report())
 
 
 if __name__ == "__main__":

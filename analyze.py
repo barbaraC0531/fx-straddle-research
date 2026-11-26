@@ -17,6 +17,12 @@ SERIES = {
 }
 CAPITAL = 1_000_000
 DEVELOPMENT_END = "2015-12"
+UNIVERSE_LABELS = {
+    "original_six": "Original six",
+    "paper_nine": "Paper nine",
+    "g10_ex_usd": "G10 ex USD",
+    "paper_nine_plus_mxn_hkd": "Paper nine + MXN + HKD",
+}
 
 
 def metrics(values):
@@ -74,6 +80,29 @@ def characteristic_sort_report():
     return "\n".join(lines)
 
 
+def prespecified_universe_report():
+    by_universe = defaultdict(list)
+    with (ROOT / "data/prespecified_universe_monthly_pnl.csv").open(
+            encoding="utf-8-sig", newline="") as source:
+        for row in csv.DictReader(source):
+            by_universe[row["universe"]].append(row)
+
+    print(f"{'Universe':<25} {'Window':<12} {'Months':>6} {'Net USD':>14} "
+          f"{'Sharpe':>9} {'Max DD (%)':>11}")
+    for name in UNIVERSE_LABELS:
+        rows = by_universe[name]
+        windows = (
+            ("Development", [r for r in rows if r["expiry_month"] <= DEVELOPMENT_END]),
+            ("Later", [r for r in rows if r["expiry_month"] > DEVELOPMENT_END]),
+            ("Full", rows),
+        )
+        for window, selected in windows:
+            pnl, sharpe, drawdown = metrics([float(r["net_pnl"]) for r in selected])
+            print(f"{UNIVERSE_LABELS[name]:<25} {window:<12} {len(selected):>6} "
+                  f"{pnl:>14,.0f} {sharpe:>9.2f} {drawdown:>11.2f}")
+        print()
+
+
 def draw_chart(rows):
     from itertools import accumulate
     import matplotlib.dates as mdates
@@ -106,6 +135,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--plot", action="store_true", help="Regenerate the chart using Matplotlib.")
     parser.add_argument("--sorts", action="store_true", help="Print the common-window tables for all 26 characteristic sorts.")
+    parser.add_argument("--universes", action="store_true",
+                        help="Print the prespecified Phase 3 universe comparison.")
     args = parser.parse_args()
     with (ROOT / "data/monthly_pnl.csv").open(encoding="utf-8", newline="") as source:
         rows = list(csv.DictReader(source))
@@ -126,6 +157,9 @@ def main():
     if args.sorts:
         print()
         print(characteristic_sort_report())
+    if args.universes:
+        print()
+        prespecified_universe_report()
 
 
 if __name__ == "__main__":

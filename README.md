@@ -1,8 +1,8 @@
 # Which characteristics help select FX straddles?
 
-Does ranking currencies by past straddle returns or by the width of the option bid–ask spread improve on a simple implied-volatility (IV) trade? We test each characteristic on its own, each of the three pairs of characteristics, and all three together in a monthly portfolio of one-month FX straddles.
+Does ranking currencies by past straddle returns or by the width of the option bid–ask spread improve on a simple implied-volatility (IV) trade? Does the raw-IV rule become more robust when the currency universe expands? We test each characteristic on its own, each of the three pairs of characteristics, all three together, and four prespecified currency universes in monthly portfolios of one-month FX straddles.
 
-**Raw IV alone earned the highest net P&L and Sharpe in the development comparison.** Buying low-IV straddles and selling high-IV straddles earned $110,183 over the 109 months shared by all specifications. Adding a bid–ask spread screen earned $77,959. The same standalone IV rule earned just $1,013 over the subsequent ten years.
+**Raw IV alone earned the highest net P&L and Sharpe in the development comparison.** Buying low-IV straddles and selling high-IV straddles earned $110,183 over the 109 months shared by all specifications. Adding a bid–ask spread screen earned $77,959. The same standalone IV rule earned just $1,013 over the subsequent ten years. Broader prespecified universes earned positive later-period P&L, but their later Sharpe ratios remained between 0.16 and 0.17.
 
 ## Research papers and benchmarks
 
@@ -70,6 +70,25 @@ Over all 131 development months (February 2005–December 2015), MXN earned **$7
 
 On its full development period (February 2005–December 2015, 131 months), raw IV earned **USD 104,054** with a **0.72 Sharpe**. Applying the same rule over January 2016–December 2025 (120 months) earned **USD 1,013** with a **0.01 Sharpe**. This later period had already been inspected for the baseline. The momentum and illiquidity comparisons use development data only.
 
+### Does a broader currency universe help?
+
+The universe definitions were recorded before the additional currency returns were evaluated. Every row keeps the raw-IV direction, two positions per side, USD 250 vega per position, option bid–ask execution and the original pricing assumptions.
+
+| Universe | Development months | Development P&L | Development Sharpe | Later months | Later P&L | Later Sharpe |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Original six | 131 | +104,054 | 0.72 | 120 | +1,013 | 0.01 |
+| Paper nine | 123 | +50,158 | 0.36 | 120 | +17,483 | 0.16 |
+| G10 excluding USD | 131 | +29,236 | 0.20 | 120 | +19,184 | 0.17 |
+| Paper nine plus MXN and HKD | 123 | +89,155 | 0.61 | 120 | +20,274 | 0.16 |
+
+The expanded universes do not restore the original development performance after 2015. The eleven-currency result also remains concentrated: MXN contributed about **USD 70,975** over the full sample, while HKD contributed about **negative USD 23,085**. Paper nine and the eleven-currency universe each omit eight months with unavailable USDDKK 1M IV; no observations are filled. [Definitions, results, limitations and next steps](results/phase3-prespecified-universes.md)
+
+### Current status and next steps
+
+The Bloomberg collection and values-only QA for 1M IV, spot, 1M forwards, 3M IV, 25-delta risk reversals and 25-delta butterflies are complete for the Phase 3 pack. The original-six Phase 3 implementation exactly reconciles 251 months and 1,004 trades to the archived model.
+
+Next work uses the existing data: common-month paired universe comparisons with HAC inference, currency-concentration diagnostics, transaction-cost breakevens, fixed illiquidity/momentum/butterfly extensions, a prespecified 3M-minus-1M IV slope test, and final paper and presentation tables. Deferred items that require Bloomberg access are 6M IV, detailed Batch C/NDF conventions and executable 25-delta wing pricing.
+
 ### Did the IV factor decay?
 
 The public nine-currency FIV factor declined by an estimated **3.03 percentage points per year** over 2001–2022 (HAC t = −4.35). Its mean fell from **44.25 pp** in the original sample through September 2016 to **8.11 pp** afterward; the estimated change was −36.14 pp (HAC t = −3.84). Our six-currency implementation fell from **$794 per month** in development to **$8 per month** after 2015, although the estimated change just missed the conventional 5% threshold (HAC t = −1.89, p = 0.059). On the common 2006–2022 interval, both premium-return series had statistically negative trends.
@@ -84,7 +103,7 @@ The currency attribution shows that most of the six-pair deterioration came from
 
 ## Reproduce the reported results
 
-Run `python analyze.py` with Python 3.9 or later for the longer single-signal comparison, raw-IV follow-up and momentum spreads. Run `python analyze.py --sorts` to also calculate all 26 common-window portfolios and their exposure-matched IV benchmarks. For the chart, install Matplotlib and run `python analyze.py --plot`. [Single-signal monthly P&L](data/monthly_pnl.csv) · [Monthly net P&L and gross vega for all 26 sorts](data/monthly_sorts.csv)
+Run `python analyze.py` with Python 3.9 or later for the longer single-signal comparison, raw-IV follow-up and momentum spreads. Run `python analyze.py --sorts` to also calculate all 26 common-window portfolios and their exposure-matched IV benchmarks. Run `python analyze.py --universes` for the four prespecified Phase 3 universe results. For the chart, install Matplotlib and run `python analyze.py --plot`. [Single-signal monthly P&L](data/monthly_pnl.csv) · [Monthly net P&L and gross vega for all 26 sorts](data/monthly_sorts.csv) · [Prespecified-universe monthly P&L](data/prespecified_universe_monthly_pnl.csv)
 
 The single-signal file rounds P&L to cents and momentum spreads to four decimals. Empty observations mark unavailable or unevaluated results. The 26-sort file retains the calculated portfolio P&L and exposure for each month. Repricing the underlying trades requires separate access to the historical IV bid/ask, spot, one-month forward and USD funding inputs.
 

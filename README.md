@@ -91,6 +91,8 @@ The Bloomberg collection and values-only QA for 1M IV, spot, 1M forwards, 3M IV,
 
 Common-month paired universe comparisons with HAC inference, currency-concentration diagnostics, transaction-cost breakevens and the prespecified 6M-minus-1M IV slope test are complete. The remaining analytical work is limited to the already fixed illiquidity, momentum and butterfly extensions if time permits. The priority is now the final paper, presentation tables and interpretation. Detailed Batch C/NDF conventions and executable 25-delta wing pricing remain deferred because they are not required for the four fixed universes.
 
+The nine-slide final presentation draft is also complete. It keeps the proposal's visual style and tells the result as a robustness-and-decay study rather than a profitable-strategy claim. [Presentation sequence, required caveats and remaining work](results/final-presentation-outline.md)
+
 ### Did the IV factor decay?
 
 The public nine-currency FIV factor declined by an estimated **3.03 percentage points per year** over 2001–2022 (HAC t = −4.35). Its mean fell from **44.25 pp** in the original sample through September 2016 to **8.11 pp** afterward; the estimated change was −36.14 pp (HAC t = −3.84). Our six-currency implementation fell from **$794 per month** in development to **$8 per month** after 2015, although the estimated change just missed the conventional 5% threshold (HAC t = −1.89, p = 0.059). On the common 2006–2022 interval, both premium-return series had statistically negative trends.

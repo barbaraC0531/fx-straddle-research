@@ -103,6 +103,33 @@ def prespecified_universe_report():
         print()
 
 
+def phase3_robustness_report():
+    with (ROOT / "data/phase3_6m_slope_strategy_summary.csv").open(
+            encoding="utf-8-sig", newline="") as source:
+        summaries = list(csv.DictReader(source))
+    with (ROOT / "data/phase3_6m_slope_paired_comparisons.csv").open(
+            encoding="utf-8-sig", newline="") as source:
+        comparisons = list(csv.DictReader(source))
+
+    print("6M-minus-1M IV slope versus matched raw IV")
+    print(f"{'Universe':<25} {'Window':<12} {'Months':>6} {'TSIV USD':>12} "
+          f"{'TSIV SR':>8} {'Raw IV USD':>12} {'Raw SR':>8} {'HAC p':>8}")
+    for name in UNIVERSE_LABELS:
+        for window, label in (("development_2005_2015", "Development"),
+                              ("later_2016_2025", "Later")):
+            tsiv = next(row for row in summaries if row["universe"] == name
+                        and row["window"] == window and row["strategy"] == "tsiv_6m_minus_1m")
+            raw = next(row for row in summaries if row["universe"] == name
+                       and row["window"] == window and row["strategy"] == "matched_raw_iv")
+            comparison = next(row for row in comparisons if row["universe"] == name
+                              and row["window"] == window)
+            print(f"{UNIVERSE_LABELS[name]:<25} {label:<12} {int(float(comparison['months'])):>6} "
+                  f"{float(tsiv['net_pnl_usd']):>12,.0f} {float(tsiv['sharpe']):>8.2f} "
+                  f"{float(raw['net_pnl_usd']):>12,.0f} {float(raw['sharpe']):>8.2f} "
+                  f"{float(comparison['p_two_sided_hac4']):>8.3f}")
+        print()
+
+
 def draw_chart(rows):
     from itertools import accumulate
     import matplotlib.dates as mdates
@@ -137,6 +164,8 @@ def main():
     parser.add_argument("--sorts", action="store_true", help="Print the common-window tables for all 26 characteristic sorts.")
     parser.add_argument("--universes", action="store_true",
                         help="Print the prespecified Phase 3 universe comparison.")
+    parser.add_argument("--phase3-robustness", action="store_true",
+                        help="Print the 6M-minus-1M slope and matched raw-IV comparison.")
     args = parser.parse_args()
     with (ROOT / "data/monthly_pnl.csv").open(encoding="utf-8", newline="") as source:
         rows = list(csv.DictReader(source))
@@ -160,6 +189,9 @@ def main():
     if args.universes:
         print()
         prespecified_universe_report()
+    if args.phase3_robustness:
+        print()
+        phase3_robustness_report()
 
 
 if __name__ == "__main__":

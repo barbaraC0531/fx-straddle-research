@@ -4,6 +4,8 @@ Does ranking currencies by past straddle returns or by the width of the option b
 
 **Raw IV alone earned the highest net P&L and Sharpe in the development comparison.** Buying low-IV straddles and selling high-IV straddles earned $110,183 over the 109 months shared by all specifications. Adding a bid–ask spread screen earned $77,959. The same standalone IV rule earned just $1,013 over the subsequent ten years. Broader prespecified universes earned positive later-period P&L, but their later Sharpe ratios remained between 0.16 and 0.17.
 
+**A prespecified 6M-minus-1M IV slope did not rescue the strategy.** The slope portfolio earned positive development P&L in all four fixed universes, but none of its paired differences versus raw IV was statistically significant. From 2016 through 2025, all four slope portfolios had negative P&L while the matched raw-IV portfolios were positive. [Slope, common-month, concentration and cost evidence](results/phase3-6m-slope-and-robustness.md)
+
 ## Research papers and benchmarks
 
 **The baseline strategy** comes from Fullwood, James and Marsh (2021), *Volatility and the Cross-Section of Returns on FX Options*. They buy low-IV and sell high-IV straddles. Their monthly comparison reports a mean long–short return of 42.53% on entry premium (Table 12). We apply their ranking rule to six USD pairs and measure the net dollar P&L of a vega-sized portfolio. [Paper and accepted manuscript](https://openaccess.city.ac.uk/id/eprint/24959/)
@@ -85,9 +87,9 @@ The expanded universes do not restore the original development performance after
 
 ### Current status and next steps
 
-The Bloomberg collection and values-only QA for 1M IV, spot, 1M forwards, 3M IV, 25-delta risk reversals and 25-delta butterflies are complete for the Phase 3 pack. The original-six Phase 3 implementation exactly reconciles 251 months and 1,004 trades to the archived model.
+The Bloomberg collection and values-only QA for 1M IV, spot, 1M forwards, 3M IV, 6M IV, 25-delta risk reversals and 25-delta butterflies are complete for the Phase 3 pack. The original-six Phase 3 implementation exactly reconciles 251 months and 1,004 trades to the archived model.
 
-Next work uses the existing data: common-month paired universe comparisons with HAC inference, currency-concentration diagnostics, transaction-cost breakevens, fixed illiquidity/momentum/butterfly extensions, a prespecified 3M-minus-1M IV slope test, and final paper and presentation tables. Deferred items that require Bloomberg access are 6M IV, detailed Batch C/NDF conventions and executable 25-delta wing pricing.
+Common-month paired universe comparisons with HAC inference, currency-concentration diagnostics, transaction-cost breakevens and the prespecified 6M-minus-1M IV slope test are complete. The remaining analytical work is limited to the already fixed illiquidity, momentum and butterfly extensions if time permits. The priority is now the final paper, presentation tables and interpretation. Detailed Batch C/NDF conventions and executable 25-delta wing pricing remain deferred because they are not required for the four fixed universes.
 
 ### Did the IV factor decay?
 
@@ -103,7 +105,7 @@ The currency attribution shows that most of the six-pair deterioration came from
 
 ## Reproduce the reported results
 
-Run `python analyze.py` with Python 3.9 or later for the longer single-signal comparison, raw-IV follow-up and momentum spreads. Run `python analyze.py --sorts` to also calculate all 26 common-window portfolios and their exposure-matched IV benchmarks. Run `python analyze.py --universes` for the four prespecified Phase 3 universe results. For the chart, install Matplotlib and run `python analyze.py --plot`. [Single-signal monthly P&L](data/monthly_pnl.csv) · [Monthly net P&L and gross vega for all 26 sorts](data/monthly_sorts.csv) · [Prespecified-universe monthly P&L](data/prespecified_universe_monthly_pnl.csv)
+Run `python analyze.py` with Python 3.9 or later for the longer single-signal comparison, raw-IV follow-up and momentum spreads. Run `python analyze.py --sorts` to also calculate all 26 common-window portfolios and their exposure-matched IV benchmarks. Run `python analyze.py --universes` for the four prespecified Phase 3 universe results. Run `python analyze.py --phase3-robustness` for the 6M-minus-1M slope and matched raw-IV table. For the chart, install Matplotlib and run `python analyze.py --plot`. [Single-signal monthly P&L](data/monthly_pnl.csv) · [Monthly net P&L and gross vega for all 26 sorts](data/monthly_sorts.csv) · [Prespecified-universe monthly P&L](data/prespecified_universe_monthly_pnl.csv) · [TSIV monthly paired P&L](data/phase3_6m_slope_monthly_pnl.csv)
 
 The single-signal file rounds P&L to cents and momentum spreads to four decimals. Empty observations mark unavailable or unevaluated results. The 26-sort file retains the calculated portfolio P&L and exposure for each month. Repricing the underlying trades requires separate access to the historical IV bid/ask, spot, one-month forward and USD funding inputs.
 

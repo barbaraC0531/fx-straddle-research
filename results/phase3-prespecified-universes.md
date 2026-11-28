@@ -30,7 +30,7 @@ The implementation first reproduced the archived original-six model: 251 expiry 
 
 The broader universes have positive later-period point estimates, but later Sharpe ratios remain between 0.16 and 0.17. Breadth therefore does not recover the strength of the original-six development result. The eleven-currency result is also not free of concentration: MXN contributed USD 70,975 over its full 243-month sample, while HKD contributed negative USD 23,085.
 
-Paper nine and the eleven-currency universe each omit eight universe-months because the required USDDKK 1M IV was not observed. No forward fill, backfill or substitution is used. Their reported development samples therefore contain 123 rather than 131 months. A common-month paired comparison with HAC inference remains a next step.
+Paper nine and the eleven-currency universe each omit eight universe-months because the required USDDKK 1M IV was not observed. No forward fill, backfill or substitution is used. Their reported development samples therefore contain 123 rather than 131 months. The completed common-month comparison uses 123 development months and 120 later months for all four universes. None of the later pairwise differences is statistically significant. [Common-month inference and related diagnostics](phase3-6m-slope-and-robustness.md)
 
 ## Data and publication boundary
 
@@ -38,14 +38,12 @@ This repository contains only derived monthly portfolio results, summary statist
 
 ## Next work
 
-1. Compare all four universes on their common eligible months using paired monthly P&L differences, HAC standard errors and confidence intervals.
-2. Measure concentration and selection frequency by currency and side, including an MXN contribution check for the eleven-currency universe.
-3. Calculate the extra forward-spread, margin and financing cost that would reduce each strategy's net P&L to zero.
-4. Extend the already fixed illiquidity, momentum and 25-delta-butterfly diagnostics to the prespecified currency sets without changing their definitions.
-5. Prespecify a 3M-minus-1M IV slope test using the already collected histories before examining its return results.
-6. Convert the validated results into the final paper tables, research memo and presentation conclusions.
+The common-month HAC comparisons, currency-concentration diagnostics, transaction-cost breakevens and prespecified 6M-minus-1M IV slope test are complete. The slope did not significantly improve on matched raw IV and had negative P&L in all four later samples.
 
-Deferred work requiring additional Bloomberg access includes 6M ATM IV, detailed Batch C forward and settlement conventions, and executable 25-delta wing pricing. BRL, KRW, TWD and INR use outright NDF forwards and must not be passed through the deliverable forward-points conversion.
+1. Convert the validated results into the final paper tables, research memo and presentation conclusions.
+2. If time permits, extend the already fixed illiquidity, momentum and 25-delta-butterfly diagnostics to the prespecified currency sets without changing their definitions.
+
+Detailed Batch C forward and settlement conventions and executable 25-delta wing pricing remain deferred. They are not required for the four fixed universes. BRL, KRW, TWD and INR use outright NDF forwards and must not be passed through the deliverable forward-points conversion.
 
 ## Reproduce
 
